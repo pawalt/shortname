@@ -13,13 +13,24 @@ $ sudo ./shortname                       # need sudo since we're on port 80
 
 Now, edit your `~/.shortnamerc` file and give it some appropriate mappings:
 
-```
+```yaml
 sites:
   drive: https://drive.google.com
   hn: https://news.ycombinator.com
 ```
 
 Finally, go to `hn/` in your browser, and you should see a Hacker News redirect!
+
+You can also go to paths on your links! For example if I have:
+
+```yaml
+sites:
+  gp: https://github.com/pennlabs/
+```
+
+I can go to `gp/kittyhawk/` in my browser, and it'll take me to `github.com/pennlabs/kittyhawk`!
+
+Finally, if you want a list of all your sites, just go to `sn/` in your browser to get a json-serialized list of all your sites and where they redirect to.
 
 ## Installation
 
