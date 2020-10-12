@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -25,6 +28,7 @@ var (
 func main() {
 	timeConfig()
 	http.HandleFunc("/", root)
+	log.Println("Starting shortname HTTP server")
 	err := http.ListenAndServe(":80", nil)
 	handleErr(err)
 }
@@ -75,11 +79,16 @@ func reloadConfig() {
 
 	err = yaml.Unmarshal(configContents, &hostConfig)
 	handleErr(err)
+
+	hostConfig.Sites["sn"] = ""
 }
 
 func root(w http.ResponseWriter, req *http.Request) {
-	if url, ok := hostConfig.Sites[req.Host]; ok {
-		http.Redirect(w, req, url, http.StatusMovedPermanently)
+	if req.Host == "sn" {
+		strSites, _ := json.MarshalIndent(hostConfig, "", "  ")
+		fmt.Fprintf(w, string(strSites))
+	} else if url, ok := hostConfig.Sites[req.Host]; ok {
+		http.Redirect(w, req, path.Join(url, req.URL.Path), http.StatusMovedPermanently)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "could not find hostname "+req.Host)
