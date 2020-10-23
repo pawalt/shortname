@@ -57,7 +57,7 @@ func reloadHosts() {
 	handleErr(err)
 
 	hosts.RemoveAddress("127.0.0.1")
-	hosts.AddHost("localhost", "127.0.0.1")
+	hosts.AddHost("127.0.0.1", "localhost")
 	for key := range hostConfig.Sites {
 		hosts.AddHost("127.0.0.1", key)
 	}
