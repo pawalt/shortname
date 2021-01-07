@@ -8,7 +8,7 @@ First run the binary to create an initial config:
 
 
 ```
-$ sudo ./shortname                       # need sudo since we're on port 80
+$ sudo ./shortname -f $HOME/.shortnamerc        # need sudo since we're on port 80
 ```
 
 Now, edit your `~/.shortnamerc` file and give it some appropriate mappings:
