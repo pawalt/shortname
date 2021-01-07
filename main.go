@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"time"
+	"flag"
 
 	"net/http"
 
@@ -23,13 +24,20 @@ type Config struct {
 
 var (
 	hostConfig = Config{}
+	cfgFile string
 )
 
 func main() {
+	hd, err := homedir.Dir()
+	handleErr(err)
+	configLocation := filepath.Join(hd, ".shortnamerc")
+	flag.StringVar(&cfgFile, "f", configLocation, "file to load in config from")
+	flag.Parse()
+
 	timeConfig()
 	http.HandleFunc("/", root)
 	log.Println("Starting shortname HTTP server")
-	err := http.ListenAndServe(":80", nil)
+	err = http.ListenAndServe(":80", nil)
 	handleErr(err)
 }
 
@@ -66,15 +74,11 @@ func reloadHosts() {
 }
 
 func reloadConfig() {
-	hd, err := homedir.Dir()
-	handleErr(err)
-	configLocation := filepath.Join(hd, ".shortnamerc")
-
-	if _, err := os.Stat(configLocation); os.IsNotExist(err) {
-		ioutil.WriteFile(configLocation, []byte("sites: {}\n"), 0755)
+	if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
+		ioutil.WriteFile(cfgFile, []byte("sites: {}\n"), 0755)
 	}
 
-	configContents, err := ioutil.ReadFile(configLocation)
+	configContents, err := ioutil.ReadFile(cfgFile)
 	handleErr(err)
 
 	err = yaml.Unmarshal(configContents, &hostConfig)
