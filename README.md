@@ -41,3 +41,30 @@ $ go get github.com/pawalt/shortname
 ```
 
 Once you've got the binary, make sure it's in your path, and you're ready to roll. I recommend starting it at login if your OS supports that.
+
+## Enabling on startup
+
+Since shortname has to run as root, we have to start it up with an init process like systemd. If you're using systemd, drop this file at /etc/systemd/system/shortname.service:
+
+```
+[Unit]
+Description=shortname
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/home/<YOUR_USER_HERE>/bin/shortname -f /home/<YOUR_USER_HERE>/.shortnamerc
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Now start it and enable it at startup:
+
+```
+$ sudo systemctl enable shortname
+$ sudo systemctl start shortname
+```
